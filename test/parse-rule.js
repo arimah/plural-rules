@@ -8,6 +8,10 @@ const {
   Value,
   Range,
   Expr,
+  Samples,
+  SampleList,
+  SampleRange,
+  SampleValue,
 } = require('./helpers');
 
 describe('parseRule()', () => {
@@ -55,6 +59,7 @@ describe('parseRule()', () => {
 
   it('rejects invalid simple equalities', () => {
     rejects('n = one', `Expected value or range; got plural category 'one'`);
+    rejects('n = 1.23', `Expected an integer value; got value '1.23'`);
     rejects('n = -1', `Invalid character: -`);
     rejects('f is t', `Expected value or 'not' after 'is'; got 't'`);
     rejects('f is in 10', `Expected value or 'not' after 'is'; got 'in'`);
@@ -179,6 +184,7 @@ describe('parseRule()', () => {
     rejects('n in not 1..10', `Expected value or range; got 'not'`);
     rejects('n within 5~10', `Expected end-of-file; got '~'`);
     rejects('n in 0..10..20', `Expected end-of-file; got '..'`);
+    rejects('n in 0.1..0.2', `Expected an integer value; got value '0.1'`);
   });
 
   it('parses multiple ranges', () => {
@@ -356,5 +362,106 @@ describe('parseRule()', () => {
         ]),
       ])
     ));
+  });
+
+  it('parses "@integer" sample values', () => {
+    parses('n = 1 @integer 1', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        integer: SampleList([SampleValue(1)])
+      }),
+    ));
+
+    parses('n = 1 @integer 1, 2~5', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        integer: SampleList([
+          SampleValue(1),
+          SampleRange(SampleValue(2), SampleValue(5))
+        ])
+      })
+    ));
+
+    parses('n = 1 @integer 1, 10, 100, ...', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        integer: SampleList([
+          SampleValue(1),
+          SampleValue(10),
+          SampleValue(100),
+        ], true),
+      })
+    ));
+  });
+
+  it('rejects invalid "@integer" samples', () => {
+    rejects('n = 1 @integer ...', `Expected at least one sample value or range before '...'`);
+    rejects('n = 1 @integer 1,', `Expected sample value or sample range; got end-of-file`);
+    rejects('n = 1 @integer 1…', `Expected end-of-file; got '...'`);
+  });
+
+  it('parses "@decimal" sample values', () => {
+    parses('n = 1 @decimal 1.00', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        decimal: SampleList([SampleValue(1, '1.00')])
+      }),
+    ));
+
+    parses('n = 1 @decimal 1, 2.01~2.09', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        decimal: SampleList([
+          SampleValue(1),
+          SampleRange(SampleValue(2.01, '2.01'), SampleValue(2.09, '2.09'))
+        ])
+      })
+    ));
+
+    parses('n = 1 @decimal 1, 2.0, 3.00, …', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        decimal: SampleList([
+          SampleValue(1),
+          SampleValue(2, '2.0'),
+          SampleValue(3, '3.00'),
+        ], true),
+      })
+    ));
+  });
+
+  it('rejects invalid "@decimal" samples', () => {
+    rejects('n = 1 @decimal ...', `Expected at least one sample value or range before '...'`);
+    rejects('n = 1 @decimal 1,', `Expected sample value or sample range; got end-of-file`);
+    rejects('n = 1 @decimal 1…', `Expected end-of-file; got '...'`);
+  });
+
+  it('parses a mix of "@integer" and "@decimal"', () => {
+    parses('n = 1 @integer 1 @decimal 2', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        integer: SampleList([SampleValue(1)]),
+        decimal: SampleList([SampleValue(2)]),
+      })
+    ));
+
+    parses('n = 1 @integer 1, 2, … @decimal 3, 4, ...', PluralRule(
+      Relation({ expr: Expr('n'), ranges: [Value(1)] }),
+      Samples({
+        integer: SampleList([SampleValue(1), SampleValue(2)], true),
+        decimal: SampleList([SampleValue(3), SampleValue(4)], true),
+      })
+    ));
+  });
+
+  it('rejects "@decimal" before "@integer"', () => {
+    rejects('n = 1 @decimal 1 @integer 1', `Expected end-of-file; got '@integer'`);
+  });
+
+  it('rejects unknown sample categories', () => {
+    rejects('n = 1 @real 1', `Unknown keyword token: @real`);
+    rejects('n = 1 @int 1', `Unknown keyword token: @int`);
+    rejects('n = 1 @itneger 1', `Unknown keyword token: @itneger`);
+    rejects('n = 1 @foobar 1', `Unknown keyword token: @foobar`);
   });
 });

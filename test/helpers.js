@@ -39,3 +39,27 @@ exports.Expr = (operand, modDivisor = null) => ({
   operand,
   modDivisor,
 });
+
+exports.Samples = ({integer = null, decimal = null}) => ({
+  kind: 'Samples',
+  integer,
+  decimal,
+});
+
+exports.SampleList = (ranges, infinite = false) => ({
+  kind: 'SampleList',
+  ranges,
+  infinite,
+});
+
+exports.SampleRange = (lower, upper) => ({
+  kind: 'SampleRange',
+  lower,
+  upper,
+});
+
+exports.SampleValue = (value, source = String(value)) => ({
+  kind: 'SampleValue',
+  source,
+  value,
+});

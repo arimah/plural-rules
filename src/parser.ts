@@ -346,7 +346,7 @@ function parseSampleList(lexer: Lexer): SampleList {
     if (lexer.accept('...')) {
       if (ranges.length === 0) {
         throw new ParseError(
-          `Expected one sample value or range before '...'`
+          `Expected at least one sample value or range before '...'`
         );
       }
       infinite = true;
