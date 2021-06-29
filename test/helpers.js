@@ -1,3 +1,9 @@
+exports.PluralRuleSet = (rules, other = null) => ({
+  kind: 'PluralRuleSet',
+  rules,
+  other,
+});
+
 exports.PluralRule = (condition, samples = null) => ({
   kind: 'PluralRule',
   condition,

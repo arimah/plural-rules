@@ -101,7 +101,7 @@ export function parseRuleSet(source: string): PluralRuleSet {
 
       if (!lexer.accept(':')) {
         throw new ParseError(
-          `Expected ':' after plural category; got ${Token.describe(token)}`
+          `Expected ':' after plural category; got ${Token.describe(lexer.peek())}`
         );
       }
 
@@ -109,6 +109,7 @@ export function parseRuleSet(source: string): PluralRuleSet {
         if (otherSeen) {
           throw new ParseError(`Category 'other' occurs more than once`);
         }
+        otherSeen = true;
         other = parseSamples(lexer);
       } else {
         if (rules.has(category)) {
