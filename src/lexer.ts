@@ -102,13 +102,13 @@ export default function lex(source: string): Lexer {
   let eof = false;
   const readNext = (): Token => {
     if (eof) {
-      return {kind: 'EOF'};
+      return { kind: 'EOF' };
     }
 
     const next = tokenGenerator.next();
     if (next.done) {
       eof = true;
-      return {kind: 'EOF'};
+      return { kind: 'EOF' };
     }
 
     return next.value;
@@ -157,10 +157,10 @@ function* tokens(source: string): Generator<Token> {
     if (m[1]) {
       const word = m[1];
       if (isKeyword(word) || isOperand(word) || isSampleCategory(word)) {
-        yield {kind: word};
+        yield { kind: word };
       } else {
         if (word[0] !== '@') {
-          yield {kind: 'PluralCategory', name: word};
+          yield { kind: 'PluralCategory', name: word };
         } else {
           throw new ParseError(`Unknown keyword token: ${word}`);
         }
@@ -169,16 +169,16 @@ function* tokens(source: string): Generator<Token> {
       const operator = m[2];
       switch (operator) {
         case '…':
-          yield {kind: '...'};
+          yield { kind: '...' };
           break;
         default:
-          yield {kind: operator as Operator};
+          yield { kind: operator as Operator };
           break;
       }
     } else if (m[3]) {
       const value = m[3];
       const isInt = !m[4];
-      yield {kind: 'Value', source: value, isInt};
+      yield { kind: 'Value', source: value, isInt };
     } else {
       throw new ParseError(`Invalid character: ${m[5]}`);
     }

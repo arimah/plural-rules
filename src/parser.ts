@@ -122,7 +122,7 @@ export function parseRuleSet(source: string): PluralRuleSet {
 
   expectEOF(lexer);
 
-  return {kind: 'PluralRuleSet', rules, other};
+  return { kind: 'PluralRuleSet', rules, other };
 }
 
 export function parseRule(source: string): PluralRule {
@@ -158,7 +158,7 @@ function parseRuleBody(lexer: Lexer): PluralRule {
    */
   const condition = parseCondition(lexer);
   const samples = parseSamples(lexer);
-  return {kind: 'PluralRule', condition, samples};
+  return { kind: 'PluralRule', condition, samples };
 }
 
 function parseCondition(lexer: Lexer): Condition {
@@ -172,7 +172,7 @@ function parseCondition(lexer: Lexer): Condition {
     while (lexer.accept('or')) {
       alternatives.push(parseAndCondition(lexer));
     }
-    return {kind: 'OrCondition', alternatives};
+    return { kind: 'OrCondition', alternatives };
   }
 
   return left;
@@ -189,7 +189,7 @@ function parseAndCondition(lexer: Lexer): Alternative {
     while (lexer.accept('and')) {
       relations.push(parseRelation(lexer));
     }
-    return {kind: 'AndCondition', relations};
+    return { kind: 'AndCondition', relations };
   }
 
   return left;
@@ -218,11 +218,10 @@ function parseRelation(lexer: Lexer): Relation {
         ? `Expected value after 'is not'`
         : `Expected value or 'not' after 'is'`
     );
-    return {kind: 'IsRelation', expr, negated, value};
+    return { kind: 'Relation', expr, negated, ranges: [value], within: false };
   }
 
-  // in_relation or within_relation
-  let relation: 'InRelation' | 'WithinRelation';
+  let within = false;
   if (token.kind === 'not') {
     negated = true;
     token = lexer.next();
@@ -233,24 +232,26 @@ function parseRelation(lexer: Lexer): Relation {
         `Expected 'in' or 'within' after 'not'; got ${Token.describe(token)}`
       );
     }
-    relation = token.kind === 'in' ? 'InRelation' : 'WithinRelation';
-  } else if (token.kind === 'in' || token.kind === '=') {
-    // 'in' and '=' are equivalent
-    relation = 'InRelation';
+    within = token.kind === 'within';
   } else if (token.kind === '!=') {
     // '!=' is the same as 'not in'
     negated = true;
-    relation = 'InRelation';
   } else if (token.kind === 'within') {
-    relation = 'WithinRelation';
-  } else {
+    // 'within' is a legacy form that changes its ranges to include non-integer
+    // values. E.g. `n in 1..3` means the same as `n = 1 or n = 2 or n = 3`, but
+    // `n within 1..3` means `1 <= n <= 3`. In the modern form, the latter is
+    // written as `i in 1..3` or `i = 1..3`.
+    within = true;
+  } else if (token.kind !== 'in' && token.kind !== '=') {
     throw new ParseError(
-      `Expected 'is', 'in', 'within' or 'not'; got ${Token.describe(token)}`
+      `Expected '=', '!=', 'is', 'in', 'within' or 'not'; got ${
+        Token.describe(token)
+      }`
     );
   }
 
   const ranges = parseRangeList(lexer);
-  return {kind: relation, expr, ranges, negated};
+  return { kind: 'Relation', expr, ranges, negated, within };
 };
 
 function parseExpr(lexer: Lexer): Expr {
@@ -272,7 +273,7 @@ function parseExpr(lexer: Lexer): Expr {
     modDivisor = expectIntValue(lexer, `Expected value after 'mod' or '%'`);
   }
 
-  return {kind: 'Expr', operand: operand.kind, modDivisor};
+  return { kind: 'Expr', operand: operand.kind, modDivisor };
 }
 
 function parseRangeList(lexer: Lexer): RangeList {
@@ -286,7 +287,7 @@ function parseRangeList(lexer: Lexer): RangeList {
 
     if (lexer.accept('..')) {
       const upper = expectIntValue(lexer, `Expected value after '..'`);
-      ranges.push({kind: 'Range', upper, lower});
+      ranges.push({ kind: 'Range', upper, lower });
     } else {
       ranges.push(lower);
     }
@@ -330,7 +331,7 @@ function parseSamples(lexer: Lexer): Samples | null {
     return null;
   }
 
-  return {kind: 'Samples', integer, decimal};
+  return { kind: 'Samples', integer, decimal };
 }
 
 function parseSampleList(lexer: Lexer): SampleList {
@@ -358,13 +359,13 @@ function parseSampleList(lexer: Lexer): SampleList {
     );
     if (lexer.accept('~')) {
       const upper = expectSampleValue(lexer, `Expected sample value after '~'`);
-      ranges.push({kind: 'SampleRange', lower, upper});
+      ranges.push({ kind: 'SampleRange', lower, upper });
     } else {
       ranges.push(lower);
     }
   } while (lexer.accept(','));
 
-  return {kind: 'SampleList', ranges, infinite};
+  return { kind: 'SampleList', ranges, infinite };
 }
 
 function expectSampleValue(lexer: Lexer, message: string): SampleValue {

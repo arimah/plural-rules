@@ -31,30 +31,12 @@ export interface AndCondition {
   readonly relations: readonly Relation[];
 }
 
-export type Relation =
-  | IsRelation
-  | InRelation
-  | WithinRelation;
-
-export interface IsRelation {
-  readonly kind: 'IsRelation';
-  readonly expr: Expr;
-  readonly value: Value;
-  readonly negated: boolean;
-}
-
-export interface InRelation {
-  readonly kind: 'InRelation';
+export interface Relation {
+  readonly kind: 'Relation';
   readonly expr: Expr;
   readonly ranges: RangeList;
   readonly negated: boolean;
-}
-
-export interface WithinRelation {
-  readonly kind: 'WithinRelation';
-  readonly expr: Expr;
-  readonly ranges: RangeList;
-  readonly negated: boolean;
+  readonly within: boolean;
 }
 
 export type RangeList = readonly (Range | Value)[];
