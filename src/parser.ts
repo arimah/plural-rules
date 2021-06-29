@@ -51,6 +51,20 @@ import {
  * keyword, we refer to as a 'plural category'.
  */
 
+/**
+ * Parses a plural rule set, which contains plural categories, their
+ * corresponding conditions, and optional sample values for each category.
+ *
+ * Example:
+ *
+ *     one: n = 1;
+ *     two: n mod 10 = 2 and n != 12 @integer 2, 22, 32, 102, 112, 122, ...
+ *
+ * The exact syntax of plural rules is beyond the scope of this comment.
+ * @param source The source string to parse.
+ * @return The parsed plural rule set.
+ * @throws {ParseError} A syntax error was encountered.
+ */
 export function parseRuleSet(source: string): PluralRuleSet {
  /*
   * This parses a set of rules:
@@ -126,6 +140,23 @@ export function parseRuleSet(source: string): PluralRuleSet {
   return { kind: 'PluralRuleSet', rules, other };
 }
 
+/**
+ * Parses a single plural rule (without plural category name). The rule contains
+ * the conditions that trigger the rule, as well as optional sample values that
+ * the rule matches.
+ *
+ * The parser does not verify that the rule matches the supplied sample values,
+ * if there are any.
+ *
+ * Examples:
+ *
+ * * `n = 1`
+ * * `n = 0, 1 or n in 11..19`
+ * * `n mod 10 not in 0, 4..8 @integer 1, 2, 3, 9, 11, 12, 13, 19, ...`
+ * @param source The source string to parse.
+ * @return The parsed plural rule.
+ * @throws {ParseError} A syntax error was encountered.
+ */
 export function parseRule(source: string): PluralRule {
   /*
    * This parses a rule *without* the plural category prefix, which means:
