@@ -315,13 +315,13 @@ function parseRangeList(lexer: Lexer): RangeList {
    */
   const ranges: (Range | Value)[] = [];
   do {
-    const lower = expectIntValue(lexer, `Expected value or range`);
+    const start = expectIntValue(lexer, `Expected value or range`);
 
     if (lexer.accept('..')) {
-      const upper = expectIntValue(lexer, `Expected value after '..'`);
-      ranges.push({ kind: 'Range', upper, lower });
+      const end = expectIntValue(lexer, `Expected value after '..'`);
+      ranges.push({ kind: 'Range', start, end });
     } else {
-      ranges.push(lower);
+      ranges.push(start);
     }
   } while (lexer.accept(','));
   return ranges;
@@ -385,15 +385,15 @@ function parseSampleList(lexer: Lexer): SampleList {
       break; // '...' is always last
     }
 
-    const lower = expectSampleValue(
+    const start = expectSampleValue(
       lexer,
       `Expected sample value or sample range`
     );
     if (lexer.accept('~')) {
-      const upper = expectSampleValue(lexer, `Expected sample value after '~'`);
-      ranges.push({ kind: 'SampleRange', lower, upper });
+      const end = expectSampleValue(lexer, `Expected sample value after '~'`);
+      ranges.push({ kind: 'SampleRange', start, end });
     } else {
-      ranges.push(lower);
+      ranges.push(start);
     }
   } while (lexer.accept(','));
 

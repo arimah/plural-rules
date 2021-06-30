@@ -133,7 +133,7 @@ export interface Expr {
 export type Operand = 'n' | 'i' | 'f' | 't' | 'v' | 'w' | 'c' | 'e';
 
 /**
- * A parse node for a range. Contains a lower bound and an upper bound; both are
+ * A parse node for a range. Contains a start value and an end value; both are
  * inclusive. By default, a range matches only *integers*. For instance, `1..4`
  * contains the values 1, 2, 3 and 4. If `within` is true in the containing
  * `Relation`, then the range includes non-integer values as well.
@@ -141,13 +141,13 @@ export type Operand = 'n' | 'i' | 'f' | 't' | 'v' | 'w' | 'c' | 'e';
 export interface Range {
   readonly kind: 'Range';
   /**
-   * The lower bound of the range, inclusive.
+   * The start of the range, inclusive.
    */
-  readonly lower: Value;
+  readonly start: Value;
   /**
-   * The upper bound of the range, inclusive.
+   * The end of the range, inclusive.
    */
-  readonly upper: Value;
+  readonly end: Value;
 }
 
 /**
@@ -203,13 +203,13 @@ export interface SampleList {
 export type SampleRangeList = readonly (SampleRange | SampleValue)[];
 
 /**
- * A parse node for a range of sample values. Contains a lower bound and an
- * upper bound (both inclusive). The bounds must have the same number of decimal
+ * A parse node for a range of sample values. Contains a start value and an end
+ * value (both inclusive). The bounds must have the same number of decimal
  * digits and exponent digits (both of which may be zero), and the range
- * encompasses all values between the lower and upper bound that have the same
- * number of decimal digits and/or exponent digits. For example, the sample
- * range `1.3~1.5` contains the values 1.3, 1.4 and 1.5 exactly, while the range
- * `5~8` contains 5, 6, 7 and 8.
+ * encompasses all values between the start and end that have the same number
+ * of decimal digits and/or exponent digits. For example, the sample range
+ * `1.3~1.5` contains the values 1.3, 1.4 and 1.5 exactly, while the range `5~8`
+ * contains 5, 6, 7 and 8.
  *
  * The parser does *not* verify the number of decimal digits or exponent digits
  * of either bound.
@@ -217,13 +217,13 @@ export type SampleRangeList = readonly (SampleRange | SampleValue)[];
 export interface SampleRange {
   readonly kind: 'SampleRange';
   /**
-   * The lower bound of the range, inclusive.
+   * The start of the range, inclusive.
    */
-  readonly lower: SampleValue;
+  readonly start: SampleValue;
   /**
-   * The upper bound of the range, inclusive.
+   * The end of the range, inclusive.
    */
-  readonly upper: SampleValue;
+  readonly end: SampleValue;
 }
 
 /**
