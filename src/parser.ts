@@ -108,15 +108,11 @@ export function parseRuleSet(source: string): PluralRuleSet {
       } else if (Token.isKeyword(token) || Token.isOperand(token)) {
         category = token.kind;
       } else {
-        throw new ParseError(
-          `Expected a plural category; got ${Token.describe(token)}`
-        );
+        return expected(`a plural category`, token);
       }
 
       if (!lexer.accept(':')) {
-        throw new ParseError(
-          `Expected ':' after plural category; got ${Token.describe(lexer.peek())}`
-        );
+        return expected(`':' after plural category`, lexer.peek());
       }
 
       if (category === 'other') {
@@ -175,7 +171,7 @@ export function parseRule(source: string): PluralRule {
 function expectEOF(lexer: Lexer) {
   const token = lexer.next();
   if (token.kind !== 'EOF') {
-    throw new ParseError(`Expected end-of-file; got ${Token.describe(token)}`);
+    expected(`end-of-file`, token);
   }
 }
 
@@ -247,8 +243,8 @@ function parseRelation(lexer: Lexer): Relation {
     const value = expectIntValue(
       lexer,
       negated
-        ? `Expected value after 'is not'`
-        : `Expected value or 'not' after 'is'`
+        ? `value after 'is not'`
+        : `value or 'not' after 'is'`
     );
     return { kind: 'Relation', expr, negated, ranges: [value], within: false };
   }
@@ -260,9 +256,7 @@ function parseRelation(lexer: Lexer): Relation {
 
     // 'not' must be followed by 'in' or 'within', never '=' or '!='.
     if (token.kind !== 'in' && token.kind !== 'within') {
-      throw new ParseError(
-        `Expected 'in' or 'within' after 'not'; got ${Token.describe(token)}`
-      );
+      return expected(`'in' or 'within' after 'not'`, token);
     }
     within = token.kind === 'within';
   } else if (token.kind === '!=') {
@@ -275,11 +269,7 @@ function parseRelation(lexer: Lexer): Relation {
     // written as `i in 1..3` or `i = 1..3`.
     within = true;
   } else if (token.kind !== 'in' && token.kind !== '=') {
-    throw new ParseError(
-      `Expected '=', '!=', 'is', 'in', 'within' or 'not'; got ${
-        Token.describe(token)
-      }`
-    );
+    return expected(`'=', '!=', 'is', 'in', 'within' or 'not'`, token);
   }
 
   const ranges = parseRangeList(lexer);
@@ -293,16 +283,12 @@ function parseExpr(lexer: Lexer): Expr {
    */
   const operand = lexer.next();
   if (!Token.isOperand(operand)) {
-    throw new ParseError(
-      `Expected an operand (n, i, f, t, v, w, c, e); got ${
-        Token.describe(operand)
-      }`
-    );
+    return expected(`an operand (n, i, f, t, v, w, c, e)`, operand);
   }
 
   let modDivisor: Value | null = null;
   if (lexer.accept('mod') || lexer.accept('%')) {
-    modDivisor = expectIntValue(lexer, `Expected value after 'mod' or '%'`);
+    modDivisor = expectIntValue(lexer, `value after 'mod' or '%'`);
   }
 
   return { kind: 'Expr', operand: operand.kind, modDivisor };
@@ -315,10 +301,10 @@ function parseRangeList(lexer: Lexer): RangeList {
    */
   const ranges: (Range | Value)[] = [];
   do {
-    const start = expectIntValue(lexer, `Expected value or range`);
+    const start = expectIntValue(lexer, `value or range`);
 
     if (lexer.accept('..')) {
-      const end = expectIntValue(lexer, `Expected value after '..'`);
+      const end = expectIntValue(lexer, `value after '..'`);
       ranges.push({ kind: 'Range', start, end });
     } else {
       ranges.push(start);
@@ -330,12 +316,10 @@ function parseRangeList(lexer: Lexer): RangeList {
 function expectIntValue(lexer: Lexer, message: string): Value {
   const token = lexer.next();
   if (token.kind !== 'Value') {
-    throw new ParseError(`${message}; got ${Token.describe(token)}`);
+    return expected(message, token);
   }
   if (!token.isInt) {
-    throw new ParseError(
-      `Expected an integer value; got ${Token.describe(token)}`
-    );
+    return expected(`an integer value`, token);
   }
   return {
     kind: 'Value',
@@ -385,12 +369,9 @@ function parseSampleList(lexer: Lexer): SampleList {
       break; // '...' is always last
     }
 
-    const start = expectSampleValue(
-      lexer,
-      `Expected sample value or sample range`
-    );
+    const start = expectSampleValue(lexer, `sample value or sample range`);
     if (lexer.accept('~')) {
-      const end = expectSampleValue(lexer, `Expected sample value after '~'`);
+      const end = expectSampleValue(lexer, `sample value after '~'`);
       ranges.push({ kind: 'SampleRange', start, end });
     } else {
       ranges.push(start);
@@ -403,7 +384,7 @@ function parseSampleList(lexer: Lexer): SampleList {
 function expectSampleValue(lexer: Lexer, message: string): SampleValue {
   const token = lexer.next();
   if (token.kind !== 'Value') {
-    throw new ParseError(`${message}; got ${Token.describe(token)}`);
+    return expected(message, token);
   }
   return {
     kind: 'SampleValue',
@@ -412,4 +393,8 @@ function expectSampleValue(lexer: Lexer, message: string): SampleValue {
       ? parseInt(token.source, 10)
       : parseFloat(token.source.replace('c', 'e')),
   };
+}
+
+function expected(expected: string, actual: Token): never {
+  throw new ParseError(`Expected ${expected}; got ${Token.describe(actual)}`);
 }
