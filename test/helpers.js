@@ -34,10 +34,10 @@ exports.Value = (value, source = String(value)) => ({
   value,
 });
 
-exports.Range = (lower, upper) => ({
+exports.Range = (start, end) => ({
   kind: 'Range',
-  lower,
-  upper,
+  start,
+  end,
 });
 
 exports.Expr = (operand, modDivisor = null) => ({
@@ -58,10 +58,10 @@ exports.SampleList = (ranges, infinite = false) => ({
   infinite,
 });
 
-exports.SampleRange = (lower, upper) => ({
+exports.SampleRange = (start, end) => ({
   kind: 'SampleRange',
-  lower,
-  upper,
+  start,
+  end,
 });
 
 exports.SampleValue = (value, source = String(value)) => ({
