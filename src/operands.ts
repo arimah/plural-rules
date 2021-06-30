@@ -83,7 +83,7 @@ export function getOperands(input: number | string): Operands {
 // If the number has passed parseFloat(), we can probably assume it's
 // reasonably formatted, so simple regexes are fine.
 const FractionPattern = /\.(\d+)/;
-const ExponentPattern = /[eE][+\-](\d+)/;
+const ExponentPattern = /[eE][+\-]?(\d+)/;
 
 function getFraction(source: string): string {
   const m = source.match(FractionPattern);
