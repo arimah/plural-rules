@@ -20,7 +20,7 @@ export interface Operands {
    */
   readonly f: number;
   /**
-   * The visible fraction digits in `n`, *with* trailing zeroes.
+   * The visible fraction digits in `n`, *without* trailing zeroes.
    */
   readonly t: number;
   /**
