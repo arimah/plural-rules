@@ -24,7 +24,7 @@ console.log(getPluralCategory(rules, 103)); // few
 
 ## About
 
-In English, plurals are pretty straightforward. Nouns are singular if the number is 1, plural otherwise: 0 things, 1 thing, 2 things, 3 things, and so on. In French, singular is used for 0 as well: 0 truc, 1 truc, 2 trucs. Other languages go beyond simple singular vs plural, up to _six_ distinct forms for Arabic. The rules can get pretty complex.
+In English, plurals are pretty straightforward. Nouns are singular if the number is 1, plural otherwise: 0 things, 1 thing, 2 things, 3 things, and so on. In French, singular is used for 0 as well: 0 truc, 1 truc, 2 trucs. Other languages go beyond simple singular vs plural, up to *six* distinct forms for Arabic. The rules can get pretty complex.
 
 The [CLDR][] defines a simple [grammar for plural rules][cldr-plural-rules]. This package parses rule definitions into a high-level syntax tree, and can evaluate such a syntax tree to find a number's plural category. See the CLDR for details on the plural rule syntax.
 
@@ -33,6 +33,12 @@ This package can [parse rule sets](#parseruleset) with multiple categories, as i
 This package accepts plural categories of any name (that contains letters a-z), in addition to the standard categories *zero*, *one*, *two*, *few*, *many* and *other*. The *other* category is the fallback category used when no other matches; it cannot have any rules.
 
 Sample values can be embedded alongside the rule. Sample values are retained but not verified by this package. They can be accessed through `rule.samples` (or `ruleset.other` for *other* category samples), which is null if no samples were specified.
+
+### Limitations
+
+**This is *not* a replacement for [`Intl.PluralRules`][intl-pluralrules].** This package does *not* ship with any plural rules for any locales. It's strictly a parser and evaluator.
+
+**Rules are not validated for correctness.** By CLDR's specification, rules must be non-overlapping. A rule set like `one: n = 1; few: n mod 10 = 1` is invalid, as the number 1 matches both *one* and *few*. This package does not attempt to find overlapping categories; it just returns the first category that matches. Similarly, impossible rules like `n = 0 and n = 1` or `n in 10..1` are not detected.
 
 ### Browser compatibility
 
@@ -125,6 +131,7 @@ The error type that is thrown when the parser encounters invalid syntax.
 
 [cldr]: http://cldr.unicode.org/
 [cldr-plural-rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
+[intl-pluralrules]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules
 [caniuse-es6-class]: https://caniuse.com/es6-class
 [caniuse-for-of]: https://caniuse.com/mdn-javascript_statements_for_of
 [caniuse-map-iterator]: https://caniuse.com/mdn-javascript_builtins_map_--iterator
