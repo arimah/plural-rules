@@ -60,6 +60,8 @@ import {
  *     one: n = 1;
  *     two: n mod 10 = 2 and n != 12 @integer 2, 22, 32, 102, 112, 122, ...
  *
+ * If sample values are included, the parser does not verify them.
+ *
  * The exact syntax of plural rules is beyond the scope of this comment.
  * @param source The source string to parse.
  * @return The parsed plural rule set.
@@ -141,8 +143,7 @@ export function parseRuleSet(source: string): PluralRuleSet {
  * the conditions that trigger the rule, as well as optional sample values that
  * the rule matches.
  *
- * The parser does not verify that the rule matches the supplied sample values,
- * if there are any.
+ * If sample values are included, the parser does not verify them.
  *
  * Examples:
  *
