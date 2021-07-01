@@ -1,5 +1,5 @@
 import ParseError from './parse-error';
-import lex, { Lexer, Token } from './lexer';
+import lex, { Lexer, Token, isKeywordToken, isOperandToken } from './lexer';
 import {
   PluralRuleSet,
   PluralRule,
@@ -105,7 +105,7 @@ export function parseRuleSet(source: string): PluralRuleSet {
       const token = lexer.next();
       if (token.kind === 'PluralCategory') {
         category = token.name;
-      } else if (Token.isKeyword(token) || Token.isOperand(token)) {
+      } else if (isKeywordToken(token) || isOperandToken(token)) {
         category = token.kind;
       } else {
         return expected(`a plural category`, token);
@@ -282,7 +282,7 @@ function parseExpr(lexer: Lexer): Expr {
    * operand = 'n' | 'i' | 'f' | 't' | 'v' | 'w' | 'c' | 'e'
    */
   const operand = lexer.next();
-  if (!Token.isOperand(operand)) {
+  if (!isOperandToken(operand)) {
     return expected(`an operand (n, i, f, t, v, w, c, e)`, operand);
   }
 
@@ -396,5 +396,20 @@ function expectSampleValue(lexer: Lexer, message: string): SampleValue {
 }
 
 function expected(expected: string, actual: Token): never {
-  throw new ParseError(`Expected ${expected}; got ${Token.describe(actual)}`);
+  let actualDescription: string;
+  switch (actual.kind) {
+    case 'PluralCategory':
+      actualDescription = `plural category '${actual.name}'`;
+      break;
+    case 'Value':
+      actualDescription = `value '${actual.source}'`;
+      break;
+    case 'EOF':
+      actualDescription = 'end-of-file';
+      break;
+    default:
+      actualDescription = `'${actual.kind}'`;
+      break;
+  }
+  throw new ParseError(`Expected ${expected}; got ${actualDescription}`);
 }

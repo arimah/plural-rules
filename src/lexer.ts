@@ -18,31 +18,16 @@ export type Token =
   | ValueToken
   | EofToken;
 
-export const Token = {
-  isKeyword(token: Token): token is KeywordToken {
-    return isKeyword(token.kind);
-  },
-
-  isOperand(token: Token): token is OperandToken {
-    return isOperand(token.kind);
-  },
-
-  describe(token: Token): string {
-    switch (token.kind) {
-      case 'PluralCategory':
-        return `plural category '${token.name}'`;
-      case 'Value':
-        return `value '${token.source}'`;
-      case 'EOF':
-        return 'end-of-file';
-      default:
-        return `'${token.kind}'`;
-    }
-  }
-} as const;
-
 export interface KeywordToken {
   readonly kind: Keyword;
+}
+
+export function isKeywordToken(token: Token): token is KeywordToken {
+  return isKeyword(token.kind);
+}
+
+export function isOperandToken(token: Token): token is OperandToken {
+  return isOperand(token.kind);
 }
 
 export type Keyword =
