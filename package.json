@@ -1,6 +1,6 @@
 {
   "name": "cldr-plural-rules",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLDR plural rules parser and evaluator.",
   "repository": "github:arimah/plural-rules",
   "author": "Alice Heurlin <alice.s.heurlin@gmail.com>",
