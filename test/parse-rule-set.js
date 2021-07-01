@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ParseError, parse } = require('../dist');
+const { ParseError, parseRuleSet } = require('../dist');
 const {
   PluralRuleSet,
   PluralRule,
@@ -16,16 +16,16 @@ const {
 } = require('./helpers');
 
 // This file does NOT test many complex rule patterns. Those tests go in ./parse-rule;
-// the regular parse() function uses the same parsing logic internally.
+// the regular parseRuleSet() function uses the same parsing logic internally.
 
-describe('parse()', () => {
+describe('parseRuleSet()', () => {
   const parses = (source, expected) => {
-    const actual = parse(source);
+    const actual = parseRuleSet(source);
     assert.deepStrictEqual(actual, expected);
   };
 
   const rejects = (source, message) => {
-    assert.throws(() => parse(source), new ParseError(message));
+    assert.throws(() => parseRuleSet(source), new ParseError(message));
   };
 
   it('parses empty documents', () => {

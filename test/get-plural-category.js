@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { parse, getPluralCategory } = require('../dist');
+const { parseRuleSet, getPluralCategory } = require('../dist');
 
 describe('getPluralCategory()', () => {
   const FractionPattern = /\.(\d+)/;
@@ -76,7 +76,7 @@ describe('getPluralCategory()', () => {
   };
 
   const categorize = (locale, source) => {
-    const rules = parse(source);
+    const rules = parseRuleSet(source);
     for (const [category, { samples }] of rules.rules.entries()) {
       if (!samples) {
         throw new Error(`Locale ${locale}: '${category}' is missing samples`);
