@@ -11,17 +11,17 @@ import {
 
 /**
  * Gets the plural category of a number based on the specified rules.
+ * @param rules The rules to match a plural category against.
  * @param n The number to get the plural category for. If the value is a string,
  *        it's parsed by parseFloat()`. Decimal digits and exponents are taken
  *        from the input string. If the value is a number, decimal digits and
  *        exponents are taken from the `String()`-formatted value.
- * @param rules The rules to match a plural category against.
  * @return The first matching plural category, or `'other'` if no category
  *         matched.
  */
 export function getPluralCategory(
-  n: number | string,
-  rules: PluralRuleSet
+  rules: PluralRuleSet,
+  n: number | string
 ): PluralCategory {
   if (rules.rules.size > 0) {
     const op = getOperands(n);
@@ -36,14 +36,14 @@ export function getPluralCategory(
 
 /**
  * Tests a plural rule against a number.
+ * @param rule The rule to test the number against.
  * @param n The number to get the plural category for. If the value is a string,
  *        it's parsed by parseFloat()`. Decimal digits and exponents are taken
  *        from the input string. If the value is a number, decimal digits and
  *        exponents are taken from the `String()`-formatted value.
- * @param rule The rule to test the number against.
  * @return True if the number matches the plural rule. Otherwise, false.
  */
-export function testPluralRule(n: number | string, rule: PluralRule): boolean {
+export function testPluralRule(rule: PluralRule, n: number | string): boolean {
   const op = getOperands(n);
   return testCondition(rule.condition, op);
 }

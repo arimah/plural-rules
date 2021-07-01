@@ -54,7 +54,7 @@ describe('getPluralCategory()', () => {
   const testSamples = (locale, rules, category, samples) => {
     if (samples.integer) {
       for (const n of sampleValues(samples.integer)) {
-        const actual = getPluralCategory(n, rules);
+        const actual = getPluralCategory(rules, n);
         assert.strictEqual(
           actual,
           category,
@@ -65,7 +65,7 @@ describe('getPluralCategory()', () => {
 
     if (samples.decimal) {
       for (const n of sampleValues(samples.decimal)) {
-        const actual = getPluralCategory(n, rules);
+        const actual = getPluralCategory(rules, n);
         assert.strictEqual(
           actual,
           category,
