@@ -16,7 +16,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "test": "mocha --ignore test/helpers.js"
+    "test": "mocha --ignore test/helpers.js",
+    "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.0",
