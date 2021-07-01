@@ -5,7 +5,7 @@ Parse and evaluate [CLDR plural rules][cldr-plural-rules].
 ## Usage
 
 ```js
-import { parseRuleSet, getPluralCategory } from '@arimah/plural-rules';
+import { parseRuleSet, getPluralCategory } from 'cldr-plural-rules';
 
 // Parse a plural rule set:
 const rules = parseRuleSet(`

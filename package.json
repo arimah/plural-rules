@@ -1,5 +1,5 @@
 {
-  "name": "@arimah/plural-rules",
+  "name": "cldr-plural-rules",
   "version": "0.1.0",
   "description": "CLDR plural rules parser and evaluator.",
   "repository": "github:arimah/plural-rules",
