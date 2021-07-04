@@ -97,7 +97,7 @@ Examples:
 
 **Returns:** A high-level syntax tree containing the parsed rule. The returned value can be passed to [`testPluralRule()`](#testpluralrule).
 
-### `getpluralcategory()`
+### `getPluralCategory()`
 
 > `function getPluralCategory(rules: PluralRuleSet, n: number | string): string`
 
