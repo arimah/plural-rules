@@ -1,6 +1,6 @@
 {
   "name": "cldr-plural-rules",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "CLDR plural rules parser and evaluator.",
   "repository": "github:arimah/plural-rules",
   "author": "Alice Heurlin <alice.s.heurlin@gmail.com>",
@@ -13,7 +13,7 @@
   "module": "dist/index.es.js",
   "sideEffects": false,
   "scripts": {
-    "build": "rollup -c rollup.config.js",
+    "build": "rollup -c rollup.config.mjs",
     "test": "mocha --ignore test/helpers.js",
     "prepublishOnly": "npm run build && npm test"
   },

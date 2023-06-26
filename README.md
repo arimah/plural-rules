@@ -129,6 +129,20 @@ Tests a single plural rule against a number.
 
 The error type that is thrown when the parser encounters invalid syntax.
 
+## Changelog
+
+### v1.0.0 - *2023-06-26*
+
+Hello, 1.0!
+
+**Breaking changes:**
+
+* Remove UMD bundles and associated sourcemaps.
+
+**Other changes:**
+
+* Clarify earlier in README that this package does *not* supply any plural rules.
+
 [cldr]: http://cldr.unicode.org/
 [cldr-plural-rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 [intl-pluralrules]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules
