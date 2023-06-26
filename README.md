@@ -1,6 +1,6 @@
 # CLDR Plural Rules Parser
 
-Parse and evaluate [CLDR plural rules][cldr-plural-rules].
+Parse and evaluate [CLDR plural rules][cldr-plural-rules]. **Does not come with built-in plural rules; use [`Intl.PluralRules`][intl-pluralrules] for that.**
 
 ## Usage
 
@@ -24,9 +24,9 @@ console.log(getPluralCategory(rules, 103)); // few
 
 ## About
 
-In English, plurals are pretty straightforward. Nouns are singular if the number is 1, plural otherwise: 0 things, 1 thing, 2 things, 3 things, and so on. In French, singular is used for 0 as well: 0 truc, 1 truc, 2 trucs. Other languages go beyond simple singular vs plural, up to *six* distinct forms for Arabic. The rules can get pretty complex.
+In English, plurals are pretty straightforward. Nouns are singular if the number is 1, plural otherwise: 0 things, 1 thing, 2 things, 3 things, and so on. In French, singular is used for 0 as well: 0 truc, 1 truc, 2 trucs. Other languages go beyond mere singular vs plural, up to *six* distinct forms for Arabic. The rules can get pretty complex.
 
-The [CLDR][] defines a simple [grammar for plural rules][cldr-plural-rules]. This package parses rule definitions into a high-level syntax tree, and can evaluate such a syntax tree to find a number's plural category. See the CLDR for details on the plural rule syntax.
+The [CLDR][] defines a small [grammar for plural rules][cldr-plural-rules]. This package parses rule definitions into a high-level syntax tree, and can evaluate such a syntax tree to find a number's plural category. See the CLDR for details on the plural rule syntax.
 
 This package can [parse rule sets](#parseruleset) with multiple categories, as in the example under [Usage](#usage). It can also [parse a single category rule](#parserule), as in `n mod 10 = 1`. The parser is strict and *will* throw an error if it encounters invalid syntax.
 
@@ -40,9 +40,9 @@ Sample values can be embedded alongside the rule. Sample values are retained but
 
 **Rules are not validated for correctness.** By CLDR's specification, rules must be non-overlapping. A rule set like `one: n = 1; few: n mod 10 = 1` is invalid, as the number 1 matches both *one* and *few*. This package does not attempt to find overlapping categories; it just returns the first category that matches. Similarly, impossible rules like `n = 0 and n = 1` or `n in 10..1` are not detected.
 
-### Browser compatibility
+### Compatibility
 
-The code makes use of [ES6 classes][caniuse-es6-class], [`for...of`][caniuse-for-of] and [map `@@iterator`][caniuse-map-iterator]. It will run in evergreen browsers, but not IE11 or earlier.
+The code makes use of [ES6 classes][caniuse-es6-class], [`for...of`][caniuse-for-of] and [map `@@iterator`][caniuse-map-iterator]. It will run in evergreen browsers, but not IE11 or earlier. It also works in nearly all versions of Node.js (but only v14 and above are officially supported).
 
 ## API documentation
 
